@@ -1,0 +1,13 @@
+/tuning_results
+/predictions
+/logs
+/data_preprocessed
+/data
+/browser_visualisation/files
+/motif_analysis/meme
+/motif_analysis/meme-5.4.1
+/motif_analysis/motifs_out
+/motif_analysis/old_format_pytorch_save
+/motif_analysis/Homo_sapiens.meme
+/promoter_regions/files
+.snakemake

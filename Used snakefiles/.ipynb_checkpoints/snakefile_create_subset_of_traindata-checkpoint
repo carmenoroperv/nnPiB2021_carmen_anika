@@ -1,0 +1,17 @@
+
+
+rule select_subset_of_traindata:
+    input: 
+        full_train_seq = "data_preprocessed/genome/Seq_masked_wo_target_train.pt",
+        full_train_target = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_train.pt",
+    output: 
+        output_seq_20 = "data_preprocessed/genome_filtered/Seq_masked_wo_target_train_20.pt",
+        output_target_20 = "data_preprocessed/genome_filtered/Target_C02M02_masked_arcsinh_train_20.pt",
+        output_seq_50 = "data_preprocessed/genome_filtered/Seq_masked_wo_target_train_50.pt",
+        output_target_50 = "data_preprocessed/genome_filtered/Target_C02M02_masked_arcsinh_train_50.pt",
+        output_seq_80 = "data_preprocessed/genome_filtered/Seq_masked_wo_target_train_80.pt",
+        output_target_80 = "data_preprocessed/genome_filtered/Target_C02M02_masked_arcsinh_train_80.pt"
+    conda:
+        "envs/nnPiB.yml"
+    script: 
+        "format_filter_process_data/select_subset_of_traindata.py"

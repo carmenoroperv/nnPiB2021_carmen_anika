@@ -1,0 +1,29 @@
+
+
+rule make_predictions:
+    input: 
+        model_path = "tuning_results/conv_net_2_layer/TR4_reeval2_GPU/ConvNet_model_ConvNet2/model_nn_epoch_87.pt",
+        test_data_tensor_file = "../../Anika/preprocessing/Overlapping_preprocessing_Carmen/preprocessing_results_genome/Train_val_test_files/Torch_files/Seq_masked_wo_target_test.pt", 
+        test_data_tsv_file_with_positions = "../../Anika/preprocessing/Overlapping_preprocessing_Carmen/preprocessing_results_genome/Train_val_test_files/Seq_masked_wo_target_test.tsv",
+        test_data_observed_tensor = "../../Anika/preprocessing/Overlapping_preprocessing_Carmen/preprocessing_results_genome/Train_val_test_files/Torch_files/Target_C02M02_masked_arcsinh_test.pt"
+    output: 
+        predictions_with_positions = "predictions/final_model_predictions_overlapping.tsv"
+    params: 
+        model_file_name = "nn_models.conv_net_2_layer",
+        model_name = "ConvNet2",
+        batch_size = 512,
+        num_channels_c1 = 75,
+        num_channels_c2 = 50,
+        conv_kernel_size_nts_c1 = 11,
+        conv_kernel_size_nts_c2 = 7,
+        conv_kernel_stride = 4,
+        pool_kernel_size_c1 = 3,
+        pool_kernel_size_c2 = 2,
+        learning_rate = 0.000001,
+        weight_decay = 0.01,
+        h1_size = 500,
+        seed = 0
+    conda:
+        "envs/nnPiB.yml"
+    script: 
+        "make_predictions.py"

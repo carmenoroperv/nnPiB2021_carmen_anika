@@ -1,0 +1,36 @@
+
+input_features_train = "data_preprocessed/genome/Seq_masked_wo_target_train.pt"
+input_target_train = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_train.pt"
+input_features_val = "data_preprocessed/genome/Seq_masked_wo_target_val.pt"
+input_target_val = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_val.pt"
+
+CONFIG_DICTS_NAMES = ["TR1_hs_wd"]
+MODEL_NAMES = ["NeuralNet", "NeuralNet_bn", "NeuralNet_do", "NeuralNet_bn_do"]
+
+output = expand("Output_linear_reg_{config}_optimize_regulation_{model}", config = CONFIG_DICTS_NAMES, model = MODEL_NAMES)
+
+rule all: 
+    input: output
+
+rule linear_one_layer_reg_TR1:
+    input: 
+        features_train = input_features_train,
+        target_train = input_target_train,
+        features_val = input_features_val,
+        target_val = input_target_val
+    output: "Output_linear_reg_{config}_optimize_regulation_{model}"
+    params: 
+        subfolder = "tuning_results/",
+        raytune_output_folder = "linear_one_layer_reg_{config}_{model}",
+        config_file_name = "tuning_configs.linear_one_layer_reg_configs",
+        config_dict_name = "{config}",
+        max_epochs = 200,
+        print_interval = 5,
+        model_file_name = "nn_models.fully_connected_one_layer_reg",
+        model_name = "{model}"
+    threads: 10
+    conda:
+        "envs/nnPiB.yml"
+    script: 
+        "tune_model_fully_connected_one_layer.py"
+        

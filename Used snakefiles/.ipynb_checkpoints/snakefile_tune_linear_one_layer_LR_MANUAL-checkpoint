@@ -1,0 +1,35 @@
+
+LEARNING_RATES = [0.000001]
+DATA_SUBSETS = ["20", "50", "80"]
+
+input_features_train = expand("data_preprocessed/genome_filtered/Seq_masked_wo_target_train_{data_subset}.pt", data_subset = DATA_SUBSETS)
+input_target_train = expand("data_preprocessed/genome_filtered/Target_C02M02_masked_arcsinh_train_{data_subset}.pt", data_subset = DATA_SUBSETS)
+input_features_val = "data_preprocessed/genome/Seq_masked_wo_target_val.pt"
+input_target_val = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_val.pt"
+
+output = expand("tuning_results/linear_one_layer/lr_{lr}_analyse_traindata_subsets/{data_subset}_subset_100e/best_val_error.txt", lr = LEARNING_RATES, data_subset = DATA_SUBSETS)
+
+rule all: 
+    input: output
+
+rule linear_one_layer_analyse_traindata_subsets:
+    input: 
+        features_train = "data_preprocessed/genome_filtered/Seq_masked_wo_target_train_{data_subset}.pt",
+        target_train = "data_preprocessed/genome_filtered/Target_C02M02_masked_arcsinh_train_{data_subset}.pt",
+        features_val = input_features_val,
+        target_val = input_target_val
+    output: 
+        output = "tuning_results/linear_one_layer/lr_{lr}_analyse_traindata_subsets/{data_subset}_subset_100e/best_val_error.txt"
+    params: 
+        subfolder = "tuning_results/linear_one_layer/lr_{lr}_analyse_traindata_subsets/{data_subset}_subset_100e/",
+        batch_size = 1024,
+        learning_rate = "{lr}",
+        weight_decay = "None",
+        h1_size = 200,
+        max_epochs = 100,
+        print_interval = 2
+    threads: 4
+    conda:
+        "envs/nnPiB.yml"
+    script: 
+        "train_model_fully_connected_one_layer.py"

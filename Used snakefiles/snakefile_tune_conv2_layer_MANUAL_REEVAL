@@ -1,0 +1,43 @@
+WEIGHT_DECAYS = ["0.01", "0.001", "0.0001"]
+
+input_features_train = "data_preprocessed/genome/Seq_masked_wo_target_train.pt"
+input_target_train = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_train.pt"
+input_features_val = "data_preprocessed/genome/Seq_masked_wo_target_val.pt"
+input_target_val = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_val.pt"
+
+output = expand("tuning_results/conv_net_2_layer/TR3_reeval_GPU/ConvNet_wd_{weight_decay}/best_val_loss.txt", weight_decay = WEIGHT_DECAYS)
+
+rule all: 
+    input: output
+
+rule conv_net_2_layer_manual_tune_reeval_gpu:
+    input: 
+        features_train = input_features_train,
+        target_train = input_target_train,
+        features_val = input_features_val,
+        target_val = input_target_val
+    output: 
+        output = "tuning_results/conv_net_2_layer/TR3_reeval_GPU/ConvNet_wd_{weight_decay}/best_val_loss.txt"
+    params:
+        subfolder = "tuning_results/conv_net_2_layer/TR3_reeval_GPU/ConvNet_wd_{weight_decay}/",
+        model_file_name = "nn_models.conv_net_2_layer",
+        model_name = "ConvNet",
+        batch_size = 512,
+        num_channels_c1 = 75,
+        num_channels_c2 = 50,
+        conv_kernel_size_nts_c1 = 11,
+        conv_kernel_size_nts_c2 = 7,
+        conv_kernel_stride = 4,
+        pool_kernel_size_c1 = 3,
+        pool_kernel_size_c2 = 2,
+        learning_rate = 0.000001,
+        weight_decay = "{weight_decay}",
+        h1_size = 500,
+        max_epochs = 300,
+        print_interval = 5,
+        seed = 0,
+        resuming_training_model = "no"
+    conda:
+        "envs/nnPiB.yml"
+    script: 
+        "train_model_conv_net_2_layer.py"

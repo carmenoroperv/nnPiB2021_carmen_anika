@@ -1,0 +1,45 @@
+#########INPUT########
+TRAIN_INPUT_SEQ = "data_preprocessed/genome/Seq_masked_wo_target_train.pt"
+VAL_INPUT_SEQ = "data_preprocessed/genome/Seq_masked_wo_target_val.pt"
+TRAIN_INPUT_TARGET = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_train.pt"
+VAL_INPUT_TARGET = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_val.pt"
+
+
+
+
+
+
+
+###RULES###############
+rule baseline_model_training_Lasso: 
+    input: 
+        trainset_x = TRAIN_INPUT_SEQ,
+        trainset_y = TRAIN_INPUT_TARGET,
+        valset_x = VAL_INPUT_SEQ,
+        valset_y = VAL_INPUT_TARGET
+    conda:
+        "envs/nnPiB.yml"
+    script: 
+        "baseline_models/Lasso_reg.py"
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

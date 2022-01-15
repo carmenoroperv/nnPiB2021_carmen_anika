@@ -1,0 +1,24 @@
+
+input_features_train = "data_preprocessed/chr22/chr22_seq_masked_wo_target_train.pt"
+input_target_train = "data_preprocessed/chr22/chr22_target_C02M02_masked_arcsinh_train.pt"
+input_features_val = "data_preprocessed/chr22/chr22_seq_masked_wo_target_val.pt"
+input_target_val = "data_preprocessed/chr22/chr22_target_C02M02_masked_arcsinh_val.pt"
+
+
+rule conv_basset_neural_net:
+    input: 
+        features_train = input_features_train,
+        target_train = input_target_train,
+        features_val = input_features_val,
+        target_val = input_target_val
+    params: 
+        subfolder = "neural_net_conv_basset_chr22/",
+        batch_size = 593,
+        max_epochs = 20,
+        print_interval = 2,
+        learning_rate = 1e-5,
+        weight_decay = 0.001
+    conda:
+        "envs/nnPiB.yml"
+    script: 
+        "train_model.py"

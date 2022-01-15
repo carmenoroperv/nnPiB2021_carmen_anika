@@ -1,0 +1,40 @@
+
+H1_SIZES = [100, 200, 300, 400, 500]
+WEIGHT_DECAYS = [0.1, 0.01, 0.001, 0.0001]
+MODELS = ["NeuralNet", "NeuralNet_bn", "NeuralNet_do", "NeuralNet_bn_do"]
+
+input_features_train = "data_preprocessed/genome/Seq_masked_wo_target_train.pt"
+input_target_train = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_train.pt"
+input_features_val = "data_preprocessed/genome/Seq_masked_wo_target_val.pt"
+input_target_val = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_val.pt"
+
+output = expand("tuning_results/linear_one_layer_reg_seed100/model_{model}/linear_one_layer_reg_MODEL_{model}_h1size_{h1_size}_wd_{weight_decay}/best_val_loss.txt", model = MODELS, h1_size = H1_SIZES, weight_decay = WEIGHT_DECAYS)
+
+rule all: 
+    input: output
+
+rule linear_one_layer_reg_hs_wd_seed100:
+    input: 
+        features_train = input_features_train,
+        target_train = input_target_train,
+        features_val = input_features_val,
+        target_val = input_target_val
+    output: 
+        output = "tuning_results/linear_one_layer_reg_seed100/model_{model}/linear_one_layer_reg_MODEL_{model}_h1size_{h1_size}_wd_{weight_decay}/best_val_loss.txt"
+    params:
+        subfolder = "tuning_results/linear_one_layer_reg_seed100/model_{model}/linear_one_layer_reg_MODEL_{model}_h1size_{h1_size}_wd_{weight_decay}/",
+        model_file_name = "nn_models.fully_connected_one_layer_reg",
+        model_name = "{model}",
+        batch_size = 1024,
+        learning_rate = 0.000001,
+        weight_decay = "{weight_decay}",
+        h1_size = "{h1_size}",
+        max_epochs = 300,
+        print_interval = 5,
+        seed = 100, 
+        resuming_training_model = "yes"
+    threads: 8
+    conda:
+        "envs/nnPiB.yml"
+    script: 
+        "train_model_fully_connected_one_layer_reg.py"

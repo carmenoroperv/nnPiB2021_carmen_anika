@@ -1,0 +1,24 @@
+
+input_features_train = "data_preprocessed/genome/Seq_masked_wo_target_train.pt"
+input_target_train = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_train.pt"
+input_features_val = "data_preprocessed/genome/Seq_masked_wo_target_val.pt"
+input_target_val = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_val.pt"
+
+rule linear_one_layer:
+    input: 
+        features_train = input_features_train,
+        target_train = input_target_train,
+        features_val = input_features_val,
+        target_val = input_target_val
+    params: 
+        subfolder = "tuning_results/",
+        raytune_output_folder = "linear_one_layer_TR1_2-bs_lr",
+        config_file_name = "tuning_configs.linear_one_layer_configs",
+        config_dict_name = "TR1_2_bs_lr",
+        max_epochs = 100,
+        print_interval = 5
+    threads: 8
+    conda:
+        "envs/nnPiB.yml"
+    script: 
+        "tune_model_fully_connected_one_layer.py"

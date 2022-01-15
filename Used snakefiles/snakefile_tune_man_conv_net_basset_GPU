@@ -1,0 +1,22 @@
+input_features_train = "data_preprocessed/genome/Seq_masked_wo_target_train.pt"
+input_target_train = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_train.pt"
+input_features_val = "data_preprocessed/genome/Seq_masked_wo_target_val.pt"
+input_target_val = "data_preprocessed/genome/Target_C02M02_masked_arcsinh_val.pt"
+
+rule conv_net_basset:
+    input: 
+        features_train = input_features_train,
+        target_train = input_target_train,
+        features_val = input_features_val,
+        target_val = input_target_val
+    params: 
+        subfolder = "tuning_results/conv_net_basset_original_wo_raytune_GPU/",
+        config_file_name = "tuning_configs.conv_net_basset_configs",
+        config_dict_name = "basset_original_GPU",
+        max_epochs = 200,
+        print_interval = 5
+    threads: 1
+    conda:
+        "envs/nnPiB.yml"
+    script: 
+        "tune_man_model_conv_net_basset.py"
